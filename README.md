@@ -34,7 +34,7 @@ A Django web application that helps you track your learning journey. Keep a pers
 
 3. **Install dependencies**
    ```bash
-   pip install django django-bootstrap5
+   pip install -r requirements.txt
    ```
 
 4. **Run migrations**
@@ -76,6 +76,7 @@ learning_log/
 ├── ll_project/        # Django project settings
 ├── ll_env/           # Virtual environment
 ├── db.sqlite3        # SQLite database
+├── requirements.txt   # Project dependencies
 └── manage.py         # Django management script
 ```
 
