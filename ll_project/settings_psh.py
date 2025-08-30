@@ -8,7 +8,7 @@ import sys
 from urllib.parse import urlparse
 
 # This variable should always match the primary database relationship name
-PLATFORM_DB_RELATIONSHIP = "postgresql"
+PLATFORM_DB_RELATIONSHIP = "database"
 
 # Helper function for decoding base64-encoded JSON variables.
 def decode(variable):
