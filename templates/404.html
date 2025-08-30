@@ -1,0 +1,10 @@
+{% extends "learning_logs/base.html" %}
+
+{% block page_header %}
+  <h2>The item you requested is not available. (404)</h2>
+{% endblock page_header %}
+
+{% block content %}
+  <p>Sorry, the page you requested could not be found.</p>
+  <p><a href="{% url 'learning_logs:index' %}">Return to the home page</a></p>
+{% endblock content %}
