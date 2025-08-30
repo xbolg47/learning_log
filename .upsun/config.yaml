@@ -7,7 +7,7 @@ applications:
 
     # The runtime the application uses.
     # Complete list of available runtimes: https://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#types
-    type: "python:3.11"
+    type: "python:3.12"
 
     # Choose which container profile (ratio CPU+RAM) your app will use. Default value comes from the image itself.
     # More information: https://docs.upsun.com/manage-resources/adjust-resources.html#adjust-a-container-profile
@@ -19,15 +19,15 @@ applications:
     # side is in the form `<service name>:<endpoint name>`.
     # More information: https://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#relationships
     relationships:
-      postgresql:
+      database: "postgresql:postgresql"
       
 
     # Mounts define directories that are writable after the build is complete.
     # More information: https://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#mounts
-    # mounts:
-    #   "/var/uploads": # Represents the path in the app.
-    #     source: "storage" # "storage" sources are unique to the app, but shared among instances of the app. "service" sources can be shared among apps.
-    #     source_path: "var/uploads" # The subdirectory within the mounted disk (the source) where the mount should point.
+    mounts:
+      "logs":
+        source: "storage"
+        source_path: "logs"
 
     # The web key configures the web server running in front of your app.
     # More information: https://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#web
@@ -37,7 +37,7 @@ applications:
       commands:
         # The command to launch your app. If it terminates, it’s restarted immediately.
         # You can use the $PORT or the $SOCKET environment variable depending on the socket family of your upstream
-        start: "gunicorn  -b unix:$SOCKET ll_project.wsgi --log-file -"
+        start: "gunicorn -w 4 -b unix:$SOCKET ll_project.wsgi:application"
       # You can listen to a UNIX socket (unix) or a TCP port (tcp, default).
       # Whether your app should speak to the webserver via TCP or Unix socket. Defaults to tcp
       # More information: https://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#where-to-listen
@@ -51,10 +51,10 @@ applications:
         "/":
           passthru: true
           
-        "/static":
+        "/static/":
           allow: true
           expires: "1h"
-          root: "static"
+          root: "static/"
           
         
 
@@ -100,10 +100,12 @@ applications:
       build: |
         set -eux
         pip install --upgrade pip
-        pip install -r requirements.txt
         pip install -r requirements_remote.txt
-        # Collect static files so that they can be served by Upsun
+        pip install -r requirements.txt
+        
+        mkdir logs
         python manage.py collectstatic --noinput
+        rm -rf logs
         
       # The deploy hook is run after the app container has been started, but before it has started accepting requests.
       # More information: https://docs.upsun.com/create-apps/hooks/hooks-comparison.html#deploy-hook
@@ -135,6 +137,7 @@ applications:
 services:
   postgresql:
     type: postgresql:15 # All available versions are: 15, 14, 13, 12, 11
+    disk: 1024
 
   
 
@@ -149,6 +152,6 @@ routes:
     upstream: "learning_log:http"
   # A basic redirect definition
   # More information: https://docs.upsun.com/define-routes.html#basic-redirect-definition
-  "https://www.{default}":
+  "https://www.{default}/":
     type: redirect
     to: "https://{default}/"

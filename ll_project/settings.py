@@ -133,19 +133,5 @@ LOGOUT_REDIRECT_URL = "learning_logs:index"
 LOGIN_URL = "accounts:login"
 
 
-# Platform.sh settings.
-from platformshconfig import Config
-
-config = Config()
-if config.is_valid_platform():
-    ALLOWED_HOSTS.append('.platformsh.site')
-    DEBUG = False
-
-    if config.appDir:
-        STATIC_ROOT = Path(config.appDir) / 'static'
-    if config.projectEntropy:
-        SECRET_KEY = config.projectEntropy
-
-
-
+# Upsun settings.
 from .settings_psh import *
