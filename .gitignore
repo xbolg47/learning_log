@@ -1,0 +1,7 @@
+ll_env/
+__pycache__/
+*.sqlite3
+*.pyc
+.DS_Store
+.vscode/
+.qodo/
