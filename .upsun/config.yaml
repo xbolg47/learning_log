@@ -99,7 +99,9 @@ applications:
       # More information: https://docs.upsun.com/create-apps/hooks/hooks-comparison.html#build-hook
       build: |
         set -eux
+        pip install --upgrade pip
         pip install -r requirements.txt
+        pip install -r requirements_remote.txt
         # Collect static files so that they can be served by Upsun
         python manage.py collectstatic --noinput
         
